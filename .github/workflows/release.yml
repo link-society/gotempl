@@ -1,0 +1,196 @@
+name: build-release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release-linux-386:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout@scm
+        uses: actions/checkout@main
+
+      - name: setup@go
+        uses: actions/setup-go@main
+        with:
+          go-version: '1.17.x'
+
+      - name: build@go
+        run: go build .
+        env:
+          GOARCH: "386"
+          GOOS: linux
+
+      - name: publish@release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: gotempl
+          asset_name: gotempl-linux-386
+          tag: ${{ github.ref }}
+          overwrite: yes
+
+  release-linux-amd64:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout@scm
+        uses: actions/checkout@main
+
+      - name: setup@go
+        uses: actions/setup-go@main
+        with:
+          go-version: '1.17.x'
+
+      - name: build@go
+        run: go build .
+        env:
+          GOARCH: amd64
+          GOOS: linux
+
+      - name: publish@release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: gotempl
+          asset_name: gotempl-linux-amd64
+          tag: ${{ github.ref }}
+          overwrite: yes
+
+  release-linux-arm:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout@scm
+        uses: actions/checkout@main
+
+      - name: setup@go
+        uses: actions/setup-go@main
+        with:
+          go-version: '1.17.x'
+
+      - name: build@go
+        run: go build .
+        env:
+          GOARCH: "arm"
+          GOOS: linux
+
+      - name: publish@release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: gotempl
+          asset_name: gotempl-linux-arm
+          tag: ${{ github.ref }}
+          overwrite: yes
+
+  release-linux-arm64:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout@scm
+        uses: actions/checkout@main
+
+      - name: setup@go
+        uses: actions/setup-go@main
+        with:
+          go-version: '1.17.x'
+
+      - name: build@go
+        run: go build .
+        env:
+          GOARCH: arm64
+          GOOS: linux
+
+      - name: publish@release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: gotempl
+          asset_name: gotempl-linux-arm64
+          tag: ${{ github.ref }}
+          overwrite: yes
+
+  release-darwin-amd64:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout@scm
+        uses: actions/checkout@main
+
+      - name: setup@go
+        uses: actions/setup-go@main
+        with:
+          go-version: '1.17.x'
+
+      - name: build@go
+        run: go build .
+        env:
+          GOARCH: amd64
+          GOOS: darwin
+
+      - name: publish@release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: gotempl
+          asset_name: gotempl-darwin-amd64
+          tag: ${{ github.ref }}
+          overwrite: yes
+
+  release-windows-386:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout@scm
+        uses: actions/checkout@main
+
+      - name: setup@go
+        uses: actions/setup-go@main
+        with:
+          go-version: '1.17.x'
+
+      - name: build@go
+        run: go build .
+        env:
+          GOARCH: "386"
+          GOOS: windows
+
+      - name: publish@release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: gotempl.exe
+          asset_name: gotempl-windows-386.exe
+          tag: ${{ github.ref }}
+          overwrite: yes
+
+  release-windows-amd64:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout@scm
+        uses: actions/checkout@main
+
+      - name: setup@go
+        uses: actions/setup-go@main
+        with:
+          go-version: '1.17.x'
+
+      - name: build@go
+        run: go build .
+        env:
+          GOARCH: amd64
+          GOOS: windows
+
+      - name: publish@release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: gotempl.exe
+          asset_name: gotempl-windows-amd64.exe
+          tag: ${{ github.ref }}
+          overwrite: yes

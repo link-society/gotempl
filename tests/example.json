@@ -1,0 +1,6 @@
+{
+  "foo": "bar",
+  "obj": {
+    "prop": "val"
+  }
+}
