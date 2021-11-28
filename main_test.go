@@ -2,10 +2,15 @@ package main
 
 import (
 	"bytes"
+	"os"
 	"testing"
 )
 
-func runTest(t *testing.T, opts *Options) {
+const expectedOutput = "foo is bar and prop is val while test is true"
+
+func runTest(t *testing.T, opts Options) {
+	os.Setenv("TEST", "true")
+
 	context, err := readInputFiles(opts)
 
 	if err != nil {
@@ -20,13 +25,13 @@ func runTest(t *testing.T, opts *Options) {
 
 	s := buf.String()
 
-	if s != "foo is bar and prop is val" {
-		t.Errorf("Template generation failed")
+	if s != expectedOutput {
+		t.Errorf("Template generation failed: %v. Expected: %v", s, expectedOutput)
 	}
 }
 
 func TestJSON(t *testing.T) {
-	runTest(t, &Options{
+	runTest(t, Options{
 		templatePath: "./tests/example.tmpl",
 		dataPath:     "./tests/example.json",
 		dataFormat:   "json",
@@ -35,7 +40,7 @@ func TestJSON(t *testing.T) {
 }
 
 func TestYAML(t *testing.T) {
-	runTest(t, &Options{
+	runTest(t, Options{
 		templatePath: "./tests/example.tmpl",
 		dataPath:     "./tests/example.yml",
 		dataFormat:   "yaml",
@@ -44,10 +49,19 @@ func TestYAML(t *testing.T) {
 }
 
 func TestTOML(t *testing.T) {
-	runTest(t, &Options{
+	runTest(t, Options{
 		templatePath: "./tests/example.tmpl",
 		dataPath:     "./tests/example.toml",
 		dataFormat:   "toml",
+		outputPath:   "",
+	})
+}
+
+func TestENV(t *testing.T) {
+	runTest(t, Options{
+		templatePath: "./tests/example.env.tmpl",
+		dataPath:     "./tests/example.env",
+		dataFormat:   "env",
 		outputPath:   "",
 	})
 }
