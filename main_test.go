@@ -48,8 +48,8 @@ func Test(t *testing.T) {
 	dataParser, template, expected := NewTestData(template, expected)
 	opts.DataParser = dataParser
 
-	const templatePath = "/tmp/gotempl.test"
-	templateFile, err := os.Create(templatePath)
+	const templatePath = "gotempl.test"
+	templateFile, err := os.CreateTemp("tests", templatePath)
 
 	if err != nil {
 		t.Fatal(err)
@@ -71,7 +71,7 @@ func Test(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = os.Remove(templatePath)
+	err = os.Remove(templateFile.Name())
 
 	if err != nil {
 		t.Fatal(err)
