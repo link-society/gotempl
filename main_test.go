@@ -1,67 +1,92 @@
-package main
+package main_test
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"testing"
+
+	"github.com/link-society/gotempl/internal"
 )
 
-const expectedOutput = "foo is bar and prop is val while test is true"
+func NewTestData(prefixTemplate, prefixExpected string) (dataParser internal.DataParser, template string, expected string) {
+	template = prefixTemplate
+	expected = prefixExpected
 
-func runTest(t *testing.T, opts Options) {
+	var format string
+	var decoder internal.DataDecoder
+	for format, decoder = range internal.DecodersByFormat {
+		var filename = fmt.Sprintf("./tests/data.%v", format)
+		var file, err = os.Open(filename)
+		if err != nil {
+			panic(err)
+		}
+		var argDataParser = internal.ArgDataParser{
+			Files:   []*os.File{file},
+			Decoder: decoder,
+		}
+
+		dataParser.ArgDataParsers = append(dataParser.ArgDataParsers, argDataParser)
+
+		template = fmt.Sprintf("%v, {{ .Data.%v }}", template, format)
+		expected = fmt.Sprintf("%v, test %v", expected, format)
+	}
+
+	expected = fmt.Sprintf("%v %v", format, expected)
+
+	return
+}
+
+const template = "{{ .Data.format }} {{ .Env.TEST }}"
+
+const expected = "true"
+
+func Test(t *testing.T) {
 	os.Setenv("TEST", "true")
 
-	context, err := readInputFiles(opts)
+	var opts = internal.Options{}
+	dataParser, template, expected := NewTestData(template, expected)
+	opts.DataParser = dataParser
+
+	const templatePath = "/tmp/gotempl.test"
+	templateFile, err := os.Create(templatePath)
 
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
+	}
+
+	_, err = templateFile.WriteString(template)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	templateFile.Seek(0, 0)
+
+	opts.Template = templateFile
+
+	context, err := opts.ReadInputFiles()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = os.Remove(templatePath)
+
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	buf := new(bytes.Buffer)
-	err = context.template.Execute(buf, context.data)
+	err = context.Template.Execute(buf, context.Data)
+
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	s := buf.String()
 
-	if s != expectedOutput {
-		t.Errorf("Template generation failed: %v. Expected: %v", s, expectedOutput)
+	if s != expected {
+		t.Fatalf("Template generation failed: %v. Expected: %v", s, expected)
 	}
-}
-
-func TestJSON(t *testing.T) {
-	runTest(t, Options{
-		templatePath: "./tests/example.tmpl",
-		dataPath:     "./tests/example.json",
-		dataFormat:   "json",
-		outputPath:   "",
-	})
-}
-
-func TestYAML(t *testing.T) {
-	runTest(t, Options{
-		templatePath: "./tests/example.tmpl",
-		dataPath:     "./tests/example.yml",
-		dataFormat:   "yaml",
-		outputPath:   "",
-	})
-}
-
-func TestTOML(t *testing.T) {
-	runTest(t, Options{
-		templatePath: "./tests/example.tmpl",
-		dataPath:     "./tests/example.toml",
-		dataFormat:   "toml",
-		outputPath:   "",
-	})
-}
-
-func TestENV(t *testing.T) {
-	runTest(t, Options{
-		templatePath: "./tests/example.env.tmpl",
-		dataPath:     "./tests/example.env",
-		dataFormat:   "env",
-		outputPath:   "",
-	})
 }
