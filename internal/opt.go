@@ -15,10 +15,14 @@ type Options struct {
 }
 
 func NewOptions(args []string) (opts Options, err error) {
+	opts.Template = os.Stdin
+	opts.Output = os.Stdout
+
 	parser := argparse.NewParser(
 		"gotempl", "Generic templating tool",
 		&argparse.ParserConfig{
-			AddShellCompletion: true,
+			AddShellCompletion:     true,
+			DisableDefaultShowHelp: true,
 		},
 	)
 
@@ -29,11 +33,7 @@ func NewOptions(args []string) (opts Options, err error) {
 			Required:   false,
 			Help:       "Path to Go Template file. Default is stdin. Example: \"TEST env var is {{ .Env.TEST }} and TEST data value is {{ .Data.TEST }}.\"",
 			Validate: func(arg string) (err error) {
-				if arg == "" {
-					opts.Template = os.Stdin
-				} else {
-					opts.Template, err = os.Open(arg)
-				}
+				opts.Template, err = os.Open(arg)
 
 				return
 			},
@@ -46,11 +46,7 @@ func NewOptions(args []string) (opts Options, err error) {
 			Required: false,
 			Help:     "Path to output file. Default is stdout",
 			Validate: func(arg string) (err error) {
-				if arg == "" {
-					opts.Output = os.Stdout
-				} else {
-					opts.Output, err = os.Create(arg)
-				}
+				opts.Output, err = os.Create(arg)
 
 				return
 			},
