@@ -15,13 +15,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	context, err := opts.ReadInputFiles()
+	context, err := internal.ReadInputFiles(opts)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 
-	err = opts.WriteOutput(context)
+	err = internal.WriteOutput(opts, context)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}

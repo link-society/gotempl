@@ -65,7 +65,7 @@ func Test(t *testing.T) {
 
 	opts.Template = templateFile
 
-	context, err := opts.ReadInputFiles()
+	context, err := internal.ReadInputFiles(opts)
 
 	if err != nil {
 		t.Fatal(err)
