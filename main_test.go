@@ -3,6 +3,7 @@ package main_test
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -17,7 +18,7 @@ func NewTestCLI(prefixTemplate, prefixExpected string) (args []string, template 
 
 	var format string
 
-	for format, _ = range internal.DecodersByFormat {
+	for format = range internal.DecodersByFormat {
 		var filename = fmt.Sprintf("./tests/data.%v", format)
 		var arg = fmt.Sprintf("--data-%v", format)
 		args = append(args, arg, filename)
@@ -45,7 +46,7 @@ func NewTestData(prefixTemplate, prefixExpected string) (dataParser *internal.Da
 			panic(err)
 		}
 		var argDataParser = internal.ArgDataParser{
-			Files:   []*os.File{file},
+			Readers: []io.Reader{file},
 			Decoder: decoder,
 		}
 
@@ -212,17 +213,13 @@ func TestData(t *testing.T) {
 	dataParser, template, expected := NewTestData(template, expected)
 	opts.DataParser = dataParser
 
-	var templateFile = NewTemplate(t, template)
-
-	opts.Template = templateFile
+	opts.Template = bytes.NewBuffer([]byte(template))
 
 	context, err := internal.ReadInputFiles(opts)
 
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	os.Remove(templateFile.Name())
 
 	buf := new(bytes.Buffer)
 	err = context.Template.Execute(buf, context.Data)

@@ -50,7 +50,6 @@ test is EXAMPLE, subbar equals 2 and foo is bar
 
 ### Help
 
-
 ```bash
 usage: gotempl [--help] [--completion] [--output OUTPUT] [--data-env DATA-ENV [DATA-ENV ...]] [--data-json DATA-JSON [DATA-JSON ...]] [--data-yaml DATA-YAML [DATA-YAML ...]] [--data-toml DATA-TOML [DATA-TOML ...]] [TEMPLATE]
 

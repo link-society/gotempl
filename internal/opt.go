@@ -3,14 +3,15 @@ package internal
 import (
 	"errors"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/hellflame/argparse"
 )
 
 type Options struct {
-	Template   *os.File
-	Output     *os.File
+	Template   io.Reader
+	Output     io.Writer
 	DataParser *DataParser
 }
 

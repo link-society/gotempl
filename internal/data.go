@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 
@@ -31,16 +32,16 @@ func NewDataParser(argParser *argparse.Parser) (dataParser *DataParser) {
 func (dataParser *DataParser) GetData() (data Data, err error) {
 	data = Data{}
 	var bytes []byte
-	var file *os.File
+	var reader io.Reader
 
 	for _, dataParser := range dataParser.ArgDataParsers {
-		file, err = dataParser.GetNextFile()
+		reader, err = dataParser.GetNextReader()
 
 		if err != nil {
 			return
 		}
 
-		bytes, err = ioutil.ReadAll(file)
+		bytes, err = ioutil.ReadAll(reader)
 
 		if err != nil {
 			return
@@ -65,17 +66,17 @@ func GetShortcut(format string) string {
 }
 
 type ArgDataParser struct {
-	Files   []*os.File
+	Readers []io.Reader
 	Decoder DataDecoder
 	index   int
 }
 
 func (argDataParser ArgDataParser) String() string {
-	return fmt.Sprintf("Files: %v, index: %v", argDataParser.Files, argDataParser.index)
+	return fmt.Sprintf("Readers: %v, index: %v", argDataParser.Readers, argDataParser.index)
 }
 
-func (argDataParser *ArgDataParser) GetNextFile() (file *os.File, err error) {
-	file = argDataParser.Files[argDataParser.index]
+func (argDataParser *ArgDataParser) GetNextReader() (reader io.Reader, err error) {
+	reader = argDataParser.Readers[argDataParser.index]
 	argDataParser.index += 1
 	return
 }
@@ -100,7 +101,7 @@ func (dataParser *DataParser) NewArgDataParser(format string, decoder DataDecode
 				file, err = os.Open(arg)
 
 				if err == nil {
-					argDataParser.Files = append(argDataParser.Files, file)
+					argDataParser.Readers = append(argDataParser.Readers, file)
 					dataParser.ArgDataParsers = append(dataParser.ArgDataParsers, argDataParser)
 				}
 
