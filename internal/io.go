@@ -12,30 +12,33 @@ type Context struct {
 	Data     map[string]interface{}
 }
 
-func ReadInputFiles(opts Options) (ctx Context, err error) {
+func ReadInputFiles(opts *Options) (*Context, error) {
 	templateContent, err := ioutil.ReadAll(opts.Template)
 	if err != nil {
-		return
+		return nil, err
 	}
 
-	ctx.Template, err = template.New("template").Parse(string(templateContent))
+	template, err := template.New("template").Parse(string(templateContent))
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	data, err := opts.DataParser.GetData()
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	env := getEnvironment()
 
-	ctx.Data = map[string]interface{}{
-		"Data": data,
-		"Env":  env,
+	ctx := &Context{
+		Template: template,
+		Data: map[string]interface{}{
+			"Data": data,
+			"Env":  env,
+		},
 	}
 
-	return ctx, err
+	return ctx, nil
 }
 
 func getEnvironment() map[string]string {
@@ -49,6 +52,6 @@ func getEnvironment() map[string]string {
 	return data
 }
 
-func WriteOutput(opts Options, context Context) (err error) {
+func WriteOutput(opts *Options, context *Context) error {
 	return context.Template.Execute(opts.Output, context.Data)
 }

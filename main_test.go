@@ -66,7 +66,7 @@ const template = "{{ .Data.format }} {{ .Env.TEST }}"
 const expected = "true"
 
 func NewTemplate(t *testing.T, content string) (template *os.File) {
-	const templatePath = "gotempl.test"
+	const templatePath = "gotempl.*.test"
 	template, err := os.CreateTemp("tests", templatePath)
 
 	if err != nil {
@@ -209,7 +209,7 @@ func TestCLIOUT(t *testing.T) {
 func TestData(t *testing.T) {
 	os.Setenv("TEST", "true")
 
-	var opts = internal.Options{}
+	var opts = &internal.Options{}
 	dataParser, template, expected := NewTestData(template, expected)
 	opts.DataParser = dataParser
 

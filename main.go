@@ -24,5 +24,6 @@ func main() {
 	err = internal.WriteOutput(opts, context)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 }
