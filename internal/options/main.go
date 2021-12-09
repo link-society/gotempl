@@ -1,24 +1,25 @@
-package internal
+package options
 
 import (
 	"errors"
 	"fmt"
-	"io"
-	"os"
 
 	"github.com/hellflame/argparse"
+	"github.com/imdario/mergo"
+	"github.com/link-society/gotempl/internal/decoder"
 )
 
 type Options struct {
-	Template   io.Reader
-	Output     io.Writer
-	DataParser *DataParser
+	TemplatePath string
+	TemplateData decoder.Data
+	OutputPath   string
 }
 
-func NewOptions(args []string) (*Options, error) {
-	opts := &Options{
-		Template: os.Stdin,
-		Output:   os.Stdout,
+func ParseOptions(args []string) (Options, error) {
+	opts := Options{
+		TemplatePath: "",
+		TemplateData: map[string]interface{}{},
+		OutputPath:   "",
 	}
 
 	parser := argparse.NewParser(
@@ -34,14 +35,9 @@ func NewOptions(args []string) (*Options, error) {
 		&argparse.Option{
 			Positional: false,
 			Required:   false,
-			Help:       "Path to Go Template file. Default is stdin. Example: \"TEST env var is {{ .Env.TEST }} and TEST data value is {{ .Data.TEST }}.\"",
+			Help:       "Path to Go Template file. Default is stdin.",
 			Validate: func(arg string) error {
-				tmpl, err := os.Open(arg)
-				if err != nil {
-					return err
-				}
-
-				opts.Template = tmpl
+				opts.TemplatePath = arg
 				return nil
 			},
 		},
@@ -53,23 +49,24 @@ func NewOptions(args []string) (*Options, error) {
 			Required: false,
 			Help:     "Path to output file. Default is stdout",
 			Validate: func(arg string) error {
-				out, err := os.Create(arg)
-				if err != nil {
-					return err
-				}
-
-				opts.Output = out
+				opts.OutputPath = arg
 				return nil
 			},
 		},
 	)
 
-	opts.DataParser = NewDataParser(parser)
+	decoder.AddOptions(parser, func(data decoder.Data) error {
+		err := mergo.Merge(&opts.TemplateData, data)
+		if err != nil {
+			return errors.New(fmt.Sprintf("[data-merge] %s", err))
+		}
+
+		return nil
+	})
 
 	err := parser.Parse(args)
-
 	if err != nil {
-		return nil, errors.New(
+		return Options{}, errors.New(
 			fmt.Sprintf("%v\n\n%v", err, parser.FormatHelp()),
 		)
 	}
