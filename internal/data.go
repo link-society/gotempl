@@ -18,20 +18,17 @@ func (dataParser DataParser) String() string {
 	return fmt.Sprintf("Parsers: %v", dataParser.ArgDataParsers)
 }
 
-func NewDataParser(argParser *argparse.Parser) (dataParser DataParser) {
-	var argDataParsers = map[string]ArgDataParser{}
+func NewDataParser(argParser *argparse.Parser) (dataParser *DataParser) {
+	dataParser = &DataParser{}
 
 	for format, decoder := range DecodersByFormat {
-		var key = GetArgName(format)
-		var argDataParser = dataParser.NewArgDataParser(format, decoder, argParser)
-
-		argDataParsers[key] = argDataParser
+		dataParser.NewArgDataParser(format, decoder, argParser)
 	}
 
 	return
 }
 
-func (dataParser DataParser) GetData() (data Data, err error) {
+func (dataParser *DataParser) GetData() (data Data, err error) {
 	data = Data{}
 	var bytes []byte
 	var file *os.File
@@ -104,6 +101,7 @@ func (dataParser *DataParser) NewArgDataParser(format string, decoder DataDecode
 
 				if err == nil {
 					argDataParser.Files = append(argDataParser.Files, file)
+					dataParser.ArgDataParsers = append(dataParser.ArgDataParsers, argDataParser)
 				}
 
 				return

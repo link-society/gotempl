@@ -9,9 +9,10 @@ import (
 	"github.com/link-society/gotempl/internal"
 )
 
-func NewTestData(prefixTemplate, prefixExpected string) (dataParser internal.DataParser, template string, expected string) {
+func NewTestData(prefixTemplate, prefixExpected string) (dataParser *internal.DataParser, template string, expected string) {
 	template = prefixTemplate
 	expected = prefixExpected
+	dataParser = &internal.DataParser{}
 
 	var format string
 	var decoder internal.DataDecoder

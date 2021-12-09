@@ -11,23 +11,63 @@ The following formats are supported:
 
 ## Usage
 
-```bash
-usage: gotempl [--help] [--completion] [--output OUTPUT] [--data-yaml DATA-YAML [DATA-YAML ...]] [--data-toml DATA-TOML [DATA-TOML ...]] [--data-env DATA-ENV [DATA-ENV ...]] [--data-json DATA-JSON [DATA-JSON ...]] [TEMPLATE]
+### Example
 
-Generic templating tool
+Let two data files `json` and `data.yaml` respectively in json and yaml formats:
+
+`json`
+
+```json: json
+{
+  "bar": {
+    "subbar": 2
+  },
+  "foo": "twist"
+}
+```
+
+`data.yaml`
+
+```yaml: data.yml
+foo: bar
+```
+
+Data file processing results in only one dictionnary of data values by key, where last given data files (i.e. `data.yml` here) override previous same data file values (i.e. `json`).
+
+Therefore, `foo` data value of `data.yml` will override the same data name from `json`
+
+And ...
+
+```bash
+TEST=EXAMPLE gotempl --data-json json --data-yaml data.yml 'test is {{ .Env.TEST }}, subbar equals {{ .Data.bar.subbar }} and foo is {{ .Data.foo }}'
+```
+
+... render
+
+```bash
+test is EXAMPLE, subbar equals 2 and foo is bar
+```
+
+### Help
+
+
+```bash
+usage: gotempl [--help] [--completion] [--output OUTPUT] [--data-env DATA-ENV [DATA-ENV ...]] [--data-json DATA-JSON [DATA-JSON ...]] [--data-yaml DATA-YAML [DATA-YAML ...]] [--data-toml DATA-TOML [DATA-TOML ...]] [TEMPLATE]
+
+Generic templating tool which use both environment variables and data files as template data
 
 positional arguments:
-  TEMPLATE                             Path to Go Template file. Default is stdin. Example: "TEST env var is {{ .Env.TEST }} and TEST data value is {{ .Data.TEST
-                                        }}."
+  TEMPLATE                             Path to Go Template file. Default is stdin. Caution: if you a template argument just after a data file argument, the templ
+                                       ate will be parsed as a data file. Example: "TEST env var is {{ .Env.TEST }} and TEST data value is {{ .Data.TEST }}."
 
 optional arguments:
   --help, -h                           show this help message
   --completion                         show command completion script
   --output OUTPUT, -o OUTPUT           Path to output file. Default is stdout
-  --data-yaml DATA-YAML, -y DATA-YAML  Path to yaml data file to use for templating
-  --data-toml DATA-TOML, -t DATA-TOML  Path to toml data file to use for templating
   --data-env DATA-ENV, -e DATA-ENV     Path to env data file to use for templating
   --data-json DATA-JSON, -j DATA-JSON  Path to json data file to use for templating
+  --data-yaml DATA-YAML, -y DATA-YAML  Path to yaml data file to use for templating
+  --data-toml DATA-TOML, -t DATA-TOML  Path to toml data file to use for templating
 ```
 
 ## License
