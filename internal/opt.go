@@ -30,11 +30,11 @@ func NewOptions(args []string) (*Options, error) {
 	)
 
 	parser.String(
-		"", "template",
+		"t", "template",
 		&argparse.Option{
-			Positional: true,
+			Positional: false,
 			Required:   false,
-			Help:       "Path to Go Template file. Default is stdin. Caution: if you a template argument just after a data file argument, the template will be parsed as a data file. Example: \"TEST env var is {{ .Env.TEST }} and TEST data value is {{ .Data.TEST }}.\"",
+			Help:       "Path to Go Template file. Default is stdin. Example: \"TEST env var is {{ .Env.TEST }} and TEST data value is {{ .Data.TEST }}.\"",
 			Validate: func(arg string) error {
 				tmpl, err := os.Open(arg)
 				if err != nil {
