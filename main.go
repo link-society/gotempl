@@ -4,25 +4,33 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/link-society/gotempl/internal"
+	"github.com/link-society/gotempl/internal/io"
+	"github.com/link-society/gotempl/internal/options"
 )
 
+func ExecuteTemplate(args []string) error {
+	opts, err := options.ParseOptions(args)
+	if err != nil {
+		return err
+	}
+
+	context, err := io.NewContext(opts)
+	if err != nil {
+		return err
+	}
+
+	err = context.Write()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func main() {
-	opts, err := internal.NewOptions(os.Args[1:])
-
+	err := ExecuteTemplate(os.Args[1:])
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(io.Stderr(), err)
 		os.Exit(1)
-	}
-
-	context, err := internal.ReadInputFiles(opts)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-
-	err = internal.WriteOutput(opts, context)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
 	}
 }

@@ -1,6 +1,7 @@
 # gotempl
 
-Small binary used to generate files from Go Templates, environment variables and data files.
+Small binary used to generate files from Go Templates, environment variables
+and data files.
 
 The following formats are supported:
 
@@ -11,60 +12,114 @@ The following formats are supported:
 
 ## Usage
 
-```bash
-usage: gotempl [--help] [--completion] [--output OUTPUT] [--data-yaml DATA-YAML [DATA-YAML ...]] [--data-toml DATA-TOML [DATA-TOML ...]] [--data-env DATA-ENV [DATA-ENV ...]] [--data-json DATA-JSON [DATA-JSON ...]] [TEMPLATE]
+```
+usage: gotempl [--help] [--completion] [--template TEMPLATE] [--output OUTPUT] [--data-json DATA-JSON [DATA-JSON ...]] [--data-yaml DATA-YAML [DATA-YAML ...]] [--data-toml DATA-TOML [DATA-TOML ...]] [--data-env DATA-ENV [DATA-ENV ...]]
 
-Generic templating tool
-
-positional arguments:
-  TEMPLATE                             Path to Go Template file. Default is stdin. Example: "TEST env var is {{ .Env.TEST }} and TEST data value is {{ .Data.TEST
-                                        }}."
+Generic templating tool which use both environment variables and data files as template data
 
 optional arguments:
   --help, -h                           show this help message
   --completion                         show command completion script
+  --template TEMPLATE, -t TEMPLATE     Path to Go Template file. Default is stdin.
   --output OUTPUT, -o OUTPUT           Path to output file. Default is stdout
-  --data-yaml DATA-YAML, -y DATA-YAML  Path to yaml data file to use for templating
-  --data-toml DATA-TOML, -t DATA-TOML  Path to toml data file to use for templating
-  --data-env DATA-ENV, -e DATA-ENV     Path to env data file to use for templating
-  --data-json DATA-JSON, -j DATA-JSON  Path to json data file to use for templating
+  --data-json DATA-JSON, -j DATA-JSON  Path to JSON file
+  --data-yaml DATA-YAML, -y DATA-YAML  Path to YAML file
+  --data-toml DATA-TOML, -T DATA-TOML  Path to TOML file
+  --data-env DATA-ENV, -e DATA-ENV     Path to ENV file
+```
+
+### Example: Rendering JSON
+
+Let's create a file named `sample.json` containing the following:
+
+```json
+{
+  "name": "John Smith"
+}
+```
+
+And a file named `greeting.template` containing the following:
+
+```
+Hello {{ .Data.name }}
+```
+
+Using **gotempl**, you can then render those files to:
+
+```bash
+$ gotempl -t greeting.template --data-json sample.json
+Hello John Smith
+```
+
+### Example: Rendering multiple files
+
+Let's create a file named `greeting.yaml` containing the following:
+
+```yaml
+greeting:
+  polite: Good morning
+  informal: Hi
+```
+
+Then a file `sample.json` containing the following:
+
+```json
+{
+  "informal": true,
+  "name": "John"
+}
+```
+
+And finally, a file `greeting.template` containing the following:
+
+```
+{{- if .Data.informal -}}
+{{ .Data.greeting.informal }} {{ .Data.name }}
+{{- else -}}
+{{ .Data.greeting.polite }} {{ .Data.name }}
+{{- end -}}
+```
+
+Using **gotempl**, you can then render those files to:
+
+```bash
+$ gotempl -t greeting.template --data-yaml greeting.yaml --data-json sample.json
+Hi John
+```
+
+### Example: Reading template from stdin
+
+Using the previous `sample.json` file and **gotempl**, you can render it to:
+
+```bash
+$ export GREETING="Hello"
+$ cat <<EOF | gotempl --data-json sample.json
+{{ .Env.GREETING }} {{ .Data.name }}
+EOF
+Hello John
+```
+
+## Contributing
+
+To add a new supported format, you'll need to implement the following interface:
+
+```go
+type Decoder {
+  Format()        string        // return the format name, used for the --data-*** option
+  Shortcut()      string        // return the shortcut option to use
+  Decode([]byte)  (Data, error) // unmarhsal the input data
+}
+```
+
+The add your implementation to the decoder list in `internal/decoder/main.go`:
+
+```go
+var decoders = []Decoder{
+	//...
+  MyDecoder{},
+}
 ```
 
 ## License
 
 This project is released under the terms of the [MIT License](./LICENSE.txt).
-
-## Contribution
-
-### New data file format
-
-In order to add a new data file format, you have to add a `[]byte` format decoder, a format name and a test data file as follow:
-
-1. business code:
-
-    Add your decoder to the list of decoders `DecodersByFormat` in `internal/decoder.go`
-
-    ```go
-    // DataDecoder fill input map data with input bytes
-    type DataDecoder = func(input []byte, data Data) error
-
-    var DecodersByFormat = map[string]DataDecoder{
-      "json": jsonDecoder,
-      "yaml": yamlDecoder,
-      "toml": tomlDecoder,
-      "env":  envDecoder,
-    }
-    ```
-
-2. tests:
-
-    1. Add test data file in `tests`
-
-        According to `<format>` such as your new data file format name (i.e. `json`, `yaml`, `toml`, etc.)
-        - file name must be `data.<format>`
-        - a key `"<format>"` must equal the string `"test <format>"`
-        - a key `"format"` must equal the string `"<format>"`
-
-        (see examples in the directory `tests`)
-
-    2. Tape `go test` in a terminal

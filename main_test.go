@@ -1,92 +1,106 @@
-package main_test
+package main
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"testing"
 
-	"github.com/link-society/gotempl/internal"
+	"github.com/link-society/gotempl/internal/io"
+	"github.com/stretchr/testify/assert"
 )
 
-func NewTestData(prefixTemplate, prefixExpected string) (dataParser internal.DataParser, template string, expected string) {
-	template = prefixTemplate
-	expected = prefixExpected
+func TestEnvDataFile(t *testing.T) {
+	stdinBuf := new(bytes.Buffer)
+	stdoutBuf := new(bytes.Buffer)
 
-	var format string
-	var decoder internal.DataDecoder
-	for format, decoder = range internal.DecodersByFormat {
-		var filename = fmt.Sprintf("./tests/data.%v", format)
-		var file, err = os.Open(filename)
-		if err != nil {
-			panic(err)
-		}
-		var argDataParser = internal.ArgDataParser{
-			Files:   []*os.File{file},
-			Decoder: decoder,
-		}
-
-		dataParser.ArgDataParsers = append(dataParser.ArgDataParsers, argDataParser)
-
-		template = fmt.Sprintf("%v, {{ .Data.%v }}", template, format)
-		expected = fmt.Sprintf("%v, test %v", expected, format)
+	_, err := stdinBuf.Write([]byte("{{ .Env.PREFIX }}: {{ .Data.format }} is {{ .Data.env }}"))
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	expected = fmt.Sprintf("%v %v", format, expected)
+	io.SetInput(stdinBuf)
+	io.SetOutput(stdoutBuf)
 
-	return
+	os.Setenv("PREFIX", "TESTENV")
+
+	err = ExecuteTemplate([]string{"--data-env", "./tests/data.env"})
+	if err != nil {
+		t.Error(err)
+	}
+
+	result := stdoutBuf.String()
+	expected := "TESTENV: env is test env"
+	assert.Equal(t, result, expected)
 }
 
-const template = "{{ .Data.format }} {{ .Env.TEST }}"
+func TestJsonDataFile(t *testing.T) {
+	stdinBuf := new(bytes.Buffer)
+	stdoutBuf := new(bytes.Buffer)
 
-const expected = "true"
-
-func Test(t *testing.T) {
-	os.Setenv("TEST", "true")
-
-	var opts = internal.Options{}
-	dataParser, template, expected := NewTestData(template, expected)
-	opts.DataParser = dataParser
-
-	const templatePath = "gotempl.test"
-	templateFile, err := os.CreateTemp("tests", templatePath)
-
+	_, err := stdinBuf.Write([]byte("{{ .Env.PREFIX }}: {{ .Data.format }} is {{ .Data.json }}"))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	_, err = templateFile.WriteString(template)
+	io.SetInput(stdinBuf)
+	io.SetOutput(stdoutBuf)
 
+	os.Setenv("PREFIX", "TESTJSON")
+
+	err = ExecuteTemplate([]string{"--data-json", "./tests/data.json"})
+	if err != nil {
+		t.Error(err)
+	}
+
+	result := stdoutBuf.String()
+	expected := "TESTJSON: json is test json"
+	assert.Equal(t, result, expected)
+}
+
+func TestYamlDataFile(t *testing.T) {
+	stdinBuf := new(bytes.Buffer)
+	stdoutBuf := new(bytes.Buffer)
+
+	_, err := stdinBuf.Write([]byte("{{ .Env.PREFIX }}: {{ .Data.format }} is {{ .Data.yaml }}"))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	templateFile.Seek(0, 0)
+	io.SetInput(stdinBuf)
+	io.SetOutput(stdoutBuf)
 
-	opts.Template = templateFile
+	os.Setenv("PREFIX", "TESTYAML")
 
-	context, err := internal.ReadInputFiles(opts)
+	err = ExecuteTemplate([]string{"--data-yaml", "./tests/data.yaml"})
+	if err != nil {
+		t.Error(err)
+	}
 
+	result := stdoutBuf.String()
+	expected := "TESTYAML: yaml is test yaml"
+	assert.Equal(t, result, expected)
+}
+
+func TestTomlDataFile(t *testing.T) {
+	stdinBuf := new(bytes.Buffer)
+	stdoutBuf := new(bytes.Buffer)
+
+	_, err := stdinBuf.Write([]byte("{{ .Env.PREFIX }}: {{ .Data.format }} is {{ .Data.toml }}"))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = os.Remove(templateFile.Name())
+	io.SetInput(stdinBuf)
+	io.SetOutput(stdoutBuf)
 
+	os.Setenv("PREFIX", "TESTTOML")
+
+	err = ExecuteTemplate([]string{"--data-toml", "./tests/data.toml"})
 	if err != nil {
-		t.Fatal(err)
+		t.Error(err)
 	}
 
-	buf := new(bytes.Buffer)
-	err = context.Template.Execute(buf, context.Data)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	s := buf.String()
-
-	if s != expected {
-		t.Fatalf("Template generation failed: %v. Expected: %v", s, expected)
-	}
+	result := stdoutBuf.String()
+	expected := "TESTTOML: toml is test toml"
+	assert.Equal(t, result, expected)
 }
