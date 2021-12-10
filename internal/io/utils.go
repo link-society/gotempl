@@ -3,11 +3,13 @@ package io
 import (
 	"errors"
 	"fmt"
+	"html/template"
 	"io"
 	"io/ioutil"
 	"os"
 	"strings"
-	"text/template"
+
+	"github.com/Masterminds/sprig"
 )
 
 func ReadTemplate(path string) (*template.Template, error) {
@@ -31,7 +33,11 @@ func ReadTemplate(path string) (*template.Template, error) {
 		return nil, errors.New(fmt.Sprintf("[template-read] %s", err))
 	}
 
-	template, err := template.New("template").Parse(string(content))
+	template, err := template.
+		New("template").
+		Funcs(sprig.FuncMap()).
+		Parse(string(content))
+
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("[template-parse] %s", err))
 	}

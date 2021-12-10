@@ -1,9 +1,9 @@
 package io
 
 import (
+	"html/template"
 	"io"
 	"os"
-	"text/template"
 
 	"github.com/link-society/gotempl/internal/decoder"
 	"github.com/link-society/gotempl/internal/options"

@@ -99,6 +99,18 @@ EOF
 Hello John
 ```
 
+### Example: Using Sprig
+
+**gotempl** supports [Sprig functions](http://masterminds.github.io/sprig/):
+
+```bash
+$ export STR="hello"
+$ cat <<EOF | gotempl
+{{ .Env.STR | upper | repeat 5 }}
+EOF
+HELLOHELLOHELLOHELLOHELLO
+```
+
 ## Contributing
 
 To add a new supported format, you'll need to implement the following interface:
