@@ -1,10 +1,11 @@
-package main
+package main_test
 
 import (
 	"bytes"
 	"os"
 	"testing"
 
+	main "github.com/link-society/gotempl"
 	"github.com/link-society/gotempl/internal/io"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,7 +24,7 @@ func TestEnvDataFile(t *testing.T) {
 
 	os.Setenv("PREFIX", "TESTENV")
 
-	err = ExecuteTemplate([]string{"--data-env", "./tests/data.env"})
+	err = main.ExecuteTemplate([]string{"--data-env", "./tests/data.env"})
 	if err != nil {
 		t.Error(err)
 	}
@@ -47,7 +48,7 @@ func TestJsonDataFile(t *testing.T) {
 
 	os.Setenv("PREFIX", "TESTJSON")
 
-	err = ExecuteTemplate([]string{"--data-json", "./tests/data.json"})
+	err = main.ExecuteTemplate([]string{"--data-json", "./tests/data.json"})
 	if err != nil {
 		t.Error(err)
 	}
@@ -71,7 +72,7 @@ func TestYamlDataFile(t *testing.T) {
 
 	os.Setenv("PREFIX", "TESTYAML")
 
-	err = ExecuteTemplate([]string{"--data-yaml", "./tests/data.yaml"})
+	err = main.ExecuteTemplate([]string{"--data-yaml", "./tests/data.yaml"})
 	if err != nil {
 		t.Error(err)
 	}
@@ -95,7 +96,7 @@ func TestTomlDataFile(t *testing.T) {
 
 	os.Setenv("PREFIX", "TESTTOML")
 
-	err = ExecuteTemplate([]string{"--data-toml", "./tests/data.toml"})
+	err = main.ExecuteTemplate([]string{"--data-toml", "./tests/data.toml"})
 	if err != nil {
 		t.Error(err)
 	}
@@ -119,7 +120,7 @@ func TestSprig(t *testing.T) {
 
 	os.Setenv("VALUE", "hello")
 
-	err = ExecuteTemplate([]string{})
+	err = main.ExecuteTemplate([]string{})
 	if err != nil {
 		t.Error(err)
 	}
