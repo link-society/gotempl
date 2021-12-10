@@ -104,3 +104,27 @@ func TestTomlDataFile(t *testing.T) {
 	expected := "TESTTOML: toml is test toml"
 	assert.Equal(t, result, expected)
 }
+
+func TestSprig(t *testing.T) {
+	stdinBuf := new(bytes.Buffer)
+	stdoutBuf := new(bytes.Buffer)
+
+	_, err := stdinBuf.Write([]byte("{{ .Env.VALUE | upper | repeat 5 }}"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	io.SetInput(stdinBuf)
+	io.SetOutput(stdoutBuf)
+
+	os.Setenv("VALUE", "hello")
+
+	err = ExecuteTemplate([]string{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	result := stdoutBuf.String()
+	expected := "HELLOHELLOHELLOHELLOHELLO"
+	assert.Equal(t, result, expected)
+}
