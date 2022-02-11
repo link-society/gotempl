@@ -12,8 +12,8 @@ The following formats are supported:
 
 ## Usage
 
-```bash
-usage: gotempl [--help] [--completion] [--template TEMPLATE] [--output OUTPUT] [--data-json DATA-JSON [DATA-JSON ...]] [--data-yaml DATA-YAML [DATA-YAML ...]] [--data-toml DATA-TOML [DATA-TOML ...]] [--data-env DATA-ENV [DATA-ENV ...]]
+```text
+usage: gotempl [--help] [--completion] [--template TEMPLATE [TEMPLATE ...]] [--output OUTPUT] [--data-json DATA-JSON [DATA-JSON ...]] [--data-yaml DATA-YAML [DATA-YAML ...]] [--data-toml DATA-TOML [DATA-TOML ...]] [--data-env DATA-ENV [DATA-ENV ...]]
 
 Generic templating tool which use both environment variables and data files as template data
 

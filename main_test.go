@@ -1,14 +1,15 @@
 package main_test
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
+	coreIO "io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
 
-	main "github.com/link-society/gotempl"
 	"github.com/link-society/gotempl/internal/io"
 	"github.com/stretchr/testify/assert"
 )
@@ -27,7 +28,7 @@ func TestEnvDataFile(t *testing.T) {
 
 	os.Setenv("PREFIX", "TESTENV")
 
-	err = main.ExecuteTemplate([]string{"--data-env", "./tests/data.env"})
+	err = io.ExecuteTemplate([]string{"--data-env", "./tests/data.env"})
 	if err != nil {
 		t.Error(err)
 	}
@@ -51,7 +52,7 @@ func TestJsonDataFile(t *testing.T) {
 
 	os.Setenv("PREFIX", "TESTJSON")
 
-	err = main.ExecuteTemplate([]string{"--data-json", "./tests/data.json"})
+	err = io.ExecuteTemplate([]string{"--data-json", "./tests/data.json"})
 	if err != nil {
 		t.Error(err)
 	}
@@ -75,7 +76,7 @@ func TestYamlDataFile(t *testing.T) {
 
 	os.Setenv("PREFIX", "TESTYAML")
 
-	err = main.ExecuteTemplate([]string{"--data-yaml", "./tests/data.yaml"})
+	err = io.ExecuteTemplate([]string{"--data-yaml", "./tests/data.yaml"})
 	if err != nil {
 		t.Error(err)
 	}
@@ -99,7 +100,7 @@ func TestTomlDataFile(t *testing.T) {
 
 	os.Setenv("PREFIX", "TESTTOML")
 
-	err = main.ExecuteTemplate([]string{"--data-toml", "./tests/data.toml"})
+	err = io.ExecuteTemplate([]string{"--data-toml", "./tests/data.toml"})
 	if err != nil {
 		t.Error(err)
 	}
@@ -123,7 +124,7 @@ func TestSprig(t *testing.T) {
 
 	os.Setenv("VALUE", "hello")
 
-	err = main.ExecuteTemplate([]string{})
+	err = io.ExecuteTemplate([]string{})
 	if err != nil {
 		t.Error(err)
 	}
@@ -145,7 +146,7 @@ func TestIsDir(t *testing.T) {
 	io.SetInput(stdinBuf)
 	io.SetOutput(stdoutBuf)
 
-	err = main.ExecuteTemplate([]string{})
+	err = io.ExecuteTemplate([]string{})
 	if err != nil {
 		t.Error(err)
 	}
@@ -167,7 +168,7 @@ func TestReadDir(t *testing.T) {
 	io.SetInput(stdinBuf)
 	io.SetOutput(stdoutBuf)
 
-	err = main.ExecuteTemplate([]string{})
+	err = io.ExecuteTemplate([]string{})
 	if err != nil {
 		t.Error(err)
 	}
@@ -192,7 +193,7 @@ func TestReadFile(t *testing.T) {
 	io.SetInput(stdinBuf)
 	io.SetOutput(stdoutBuf)
 
-	err = main.ExecuteTemplate([]string{})
+	err = io.ExecuteTemplate([]string{})
 	if err != nil {
 		t.Error(err)
 	}
@@ -216,7 +217,7 @@ func TestWalkDir(t *testing.T) {
 	io.SetInput(stdinBuf)
 	io.SetOutput(stdoutBuf)
 
-	err = main.ExecuteTemplate([]string{})
+	err = io.ExecuteTemplate([]string{})
 	if err != nil {
 		t.Error(err)
 	}
@@ -242,7 +243,7 @@ func TestFileExists(t *testing.T) {
 	io.SetInput(stdinBuf)
 	io.SetOutput(stdoutBuf)
 
-	err = main.ExecuteTemplate([]string{})
+	err = io.ExecuteTemplate([]string{})
 	if err != nil {
 		t.Error(err)
 	}
@@ -250,4 +251,34 @@ func TestFileExists(t *testing.T) {
 	result := stdoutBuf.String()
 	expected := "true"
 	assert.Equal(t, result, expected)
+}
+
+func TestTemplates(t *testing.T) {
+	stdoutBuf := new(bytes.Buffer)
+
+	io.SetOutput(stdoutBuf)
+
+	err := io.ExecuteTemplate([]string{
+		"-t", "tests/tmpl",
+		"-t", "tests/tmpl",
+	})
+	if err != nil {
+		t.Error(err)
+	}
+
+	reader := bufio.NewReader(stdoutBuf)
+	line, ok, err := reader.ReadLine()
+	assert.Equal(t, line, []byte("true"))
+	assert.False(t, ok)
+	assert.Nil(t, err)
+
+	line, ok, err = reader.ReadLine()
+	assert.Equal(t, line, []byte("true"))
+	assert.False(t, ok)
+	assert.Nil(t, err)
+
+	line, ok, err = reader.ReadLine()
+	assert.Nil(t, line)
+	assert.False(t, ok)
+	assert.ErrorIs(t, err, coreIO.EOF)
 }
