@@ -15,8 +15,27 @@ type Context struct {
 	OutputPath string
 }
 
+func ExecuteTemplate(args []string) error {
+	opts, err := options.ParseOptions(args)
+	if err != nil {
+		return err
+	}
+
+	context, err := NewContext(opts)
+	if err != nil {
+		return err
+	}
+
+	err = context.Write()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func NewContext(opts options.Options) (Context, error) {
-	template, err := ReadTemplate(opts.TemplatePath)
+	template, err := ReadTemplate(opts.TemplatePaths)
 	if err != nil {
 		return Context{}, err
 	}

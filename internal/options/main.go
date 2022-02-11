@@ -10,16 +10,14 @@ import (
 )
 
 type Options struct {
-	TemplatePath string
-	TemplateData decoder.Data
-	OutputPath   string
+	TemplatePaths []string
+	TemplateData  decoder.Data
+	OutputPath    string
 }
 
 func ParseOptions(args []string) (Options, error) {
 	opts := Options{
-		TemplatePath: "",
 		TemplateData: map[string]interface{}{},
-		OutputPath:   "",
 	}
 
 	parser := argparse.NewParser(
@@ -30,14 +28,14 @@ func ParseOptions(args []string) (Options, error) {
 		},
 	)
 
-	parser.String(
+	parser.Strings(
 		"t", "template",
 		&argparse.Option{
 			Positional: false,
 			Required:   false,
 			Help:       "Path to Go Template file. Default is stdin.",
 			Validate: func(arg string) error {
-				opts.TemplatePath = arg
+				opts.TemplatePaths = append(opts.TemplatePaths, arg)
 				return nil
 			},
 		},

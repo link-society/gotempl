@@ -1,6 +1,7 @@
 package io
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"html/template"
@@ -12,20 +13,24 @@ import (
 	"github.com/Masterminds/sprig"
 )
 
-func ReadTemplate(path string) (*template.Template, error) {
+func ReadTemplate(paths []string) (*template.Template, error) {
 	var reader io.Reader
 
-	if path == "" {
+	if len(paths) == 0 {
 		reader = Stdin()
 	} else {
-		file, err := os.Open(path)
-		if err != nil {
-			return nil, errors.New(fmt.Sprintf("[template-open] %s", err))
+		var templateContent []byte
+
+		for _, path := range paths {
+			content, err := ioutil.ReadFile(path)
+			if err != nil {
+				return nil, errors.New(fmt.Sprintf("[template-open] %s", err))
+			}
+
+			templateContent = append(templateContent, content...)
 		}
 
-		reader = file
-
-		defer file.Close()
+		reader = bytes.NewReader(templateContent)
 	}
 
 	content, err := ioutil.ReadAll(reader)
