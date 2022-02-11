@@ -36,6 +36,7 @@ func ReadTemplate(path string) (*template.Template, error) {
 	template, err := template.
 		New("template").
 		Funcs(sprig.FuncMap()).
+		Funcs(Funcs).
 		Parse(string(content))
 
 	if err != nil {
