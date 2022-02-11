@@ -12,7 +12,7 @@ The following formats are supported:
 
 ## Usage
 
-```
+```bash
 usage: gotempl [--help] [--completion] [--template TEMPLATE] [--output OUTPUT] [--data-json DATA-JSON [DATA-JSON ...]] [--data-yaml DATA-YAML [DATA-YAML ...]] [--data-toml DATA-TOML [DATA-TOML ...]] [--data-env DATA-ENV [DATA-ENV ...]]
 
 Generic templating tool which use both environment variables and data files as template data
@@ -40,7 +40,7 @@ Let's create a file named `sample.json` containing the following:
 
 And a file named `greeting.template` containing the following:
 
-```
+```tmpl
 Hello {{ .Data.name }}
 ```
 
@@ -72,7 +72,7 @@ Then a file `sample.json` containing the following:
 
 And finally, a file `greeting.template` containing the following:
 
-```
+```tmpl
 {{- if .Data.informal -}}
 {{ .Data.greeting.informal }} {{ .Data.name }}
 {{- else -}}
@@ -111,6 +111,25 @@ EOF
 HELLOHELLOHELLOHELLOHELLO
 ```
 
+### Example: Using local file functions
+
+**gotempl** supports read file functions such as
+
+| names | description |
+|-|-|
+| isDir, osIsDir | test if input path is a directory |
+| readDir, osReadDir | returns input path files |
+| readFile, osReadFile | returns input path file content |
+| walkDir, osWalkDir | returns recursively input path files and directory content |
+| fileExists, osFileExists | true if input file path exists |
+
+```bash
+$ cat <<EOF | gotempl
+{{ isDir "." }}
+EOF
+true
+```
+
 ## Contributing
 
 To add a new supported format, you'll need to implement the following interface:
@@ -127,7 +146,7 @@ The add your implementation to the decoder list in `internal/decoder/main.go`:
 
 ```go
 var decoders = []Decoder{
-	//...
+  //...
   MyDecoder{},
 }
 ```

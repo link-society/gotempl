@@ -2,7 +2,10 @@ package main_test
 
 import (
 	"bytes"
+	"fmt"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
 
 	main "github.com/link-society/gotempl"
@@ -127,5 +130,124 @@ func TestSprig(t *testing.T) {
 
 	result := stdoutBuf.String()
 	expected := "HELLOHELLOHELLOHELLOHELLO"
+	assert.Equal(t, result, expected)
+}
+
+func TestIsDir(t *testing.T) {
+	stdinBuf := new(bytes.Buffer)
+	stdoutBuf := new(bytes.Buffer)
+
+	_, err := stdinBuf.Write([]byte(`{{ isDir "internal" }}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	io.SetInput(stdinBuf)
+	io.SetOutput(stdoutBuf)
+
+	err = main.ExecuteTemplate([]string{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	result := stdoutBuf.String()
+	expected := "true"
+	assert.Equal(t, result, expected)
+}
+
+func TestReadDir(t *testing.T) {
+	stdinBuf := new(bytes.Buffer)
+	stdoutBuf := new(bytes.Buffer)
+
+	_, err := stdinBuf.Write([]byte(`{{ readDir "internal" }}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	io.SetInput(stdinBuf)
+	io.SetOutput(stdoutBuf)
+
+	err = main.ExecuteTemplate([]string{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	result := stdoutBuf.String()
+	expected := "[decoder io options]"
+	assert.Equal(t, result, expected)
+}
+
+func TestReadFile(t *testing.T) {
+	stdinBuf := new(bytes.Buffer)
+	stdoutBuf := new(bytes.Buffer)
+
+	path := "tests/data.yaml"
+	_, err := stdinBuf.Write([]byte(
+		fmt.Sprintf("{{ readFile \"%s\" }}", path)),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	io.SetInput(stdinBuf)
+	io.SetOutput(stdoutBuf)
+
+	err = main.ExecuteTemplate([]string{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	bytes, err := ioutil.ReadFile(path)
+
+	result := stdoutBuf.String()
+	expected := string(bytes)
+	assert.Equal(t, result, expected)
+}
+
+func TestWalkDir(t *testing.T) {
+	stdinBuf := new(bytes.Buffer)
+	stdoutBuf := new(bytes.Buffer)
+
+	_, err := stdinBuf.Write([]byte(`{{ walkDir ".github" }}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	io.SetInput(stdinBuf)
+	io.SetOutput(stdoutBuf)
+
+	err = main.ExecuteTemplate([]string{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	result := stdoutBuf.String()
+	expected := fmt.Sprintf(
+		"[workflows %s %s]",
+		filepath.Join("workflows", "release.yml"),
+		filepath.Join("workflows", "test-suite.yml"),
+	)
+	assert.Equal(t, result, expected)
+}
+
+func TestFileExists(t *testing.T) {
+	stdinBuf := new(bytes.Buffer)
+	stdoutBuf := new(bytes.Buffer)
+
+	_, err := stdinBuf.Write([]byte(`{{ fileExists "internal/decoder/env.go" }}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	io.SetInput(stdinBuf)
+	io.SetOutput(stdoutBuf)
+
+	err = main.ExecuteTemplate([]string{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	result := stdoutBuf.String()
+	expected := "true"
 	assert.Equal(t, result, expected)
 }
