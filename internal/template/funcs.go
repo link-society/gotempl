@@ -1,4 +1,4 @@
-package io
+package template
 
 import (
 	"errors"
@@ -79,7 +79,7 @@ func ReadDir(path string) ([]string, error) {
 	return result, nil
 }
 
-var Funcs = map[string]interface{}{
+var funcs = map[string]interface{}{
 	"isDir":        IsDir,
 	"osIsDir":      IsDir,
 	"readDir":      ReadDir,
