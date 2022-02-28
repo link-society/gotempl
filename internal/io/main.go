@@ -1,16 +1,16 @@
 package io
 
 import (
-	"html/template"
 	"io"
 	"os"
 
 	"github.com/link-society/gotempl/internal/decoder"
 	"github.com/link-society/gotempl/internal/options"
+	"github.com/link-society/gotempl/internal/template"
 )
 
 type Context struct {
-	Template   *template.Template
+	Template   *template.GenericTemplate
 	Data       decoder.Data
 	OutputPath string
 }
@@ -35,7 +35,7 @@ func ExecuteTemplate(args []string) error {
 }
 
 func NewContext(opts options.Options) (Context, error) {
-	template, err := ReadTemplate(opts.TemplatePaths)
+	template, err := ReadTemplate(opts.TemplatePaths, opts.HTML)
 	if err != nil {
 		return Context{}, err
 	}

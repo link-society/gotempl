@@ -174,7 +174,7 @@ func TestReadDir(t *testing.T) {
 	}
 
 	result := stdoutBuf.String()
-	expected := "[decoder io options]"
+	expected := "[decoder io options template]"
 	assert.Equal(t, result, expected)
 }
 

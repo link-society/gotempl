@@ -4,16 +4,15 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"html/template"
 	"io"
 	"io/ioutil"
 	"os"
 	"strings"
 
-	"github.com/Masterminds/sprig"
+	"github.com/link-society/gotempl/internal/template"
 )
 
-func ReadTemplate(paths []string) (*template.Template, error) {
+func ReadTemplate(paths []string, html bool) (*template.GenericTemplate, error) {
 	var reader io.Reader
 
 	if len(paths) == 0 {
@@ -38,11 +37,7 @@ func ReadTemplate(paths []string) (*template.Template, error) {
 		return nil, errors.New(fmt.Sprintf("[template-read] %s", err))
 	}
 
-	template, err := template.
-		New("template").
-		Funcs(sprig.FuncMap()).
-		Funcs(Funcs).
-		Parse(string(content))
+	template, err := template.New("template", html).Parse(string(content))
 
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("[template-parse] %s", err))

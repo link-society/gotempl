@@ -20,6 +20,7 @@ Generic templating tool which use both environment variables and data files as t
 optional arguments:
   --help, -h                           show this help message
   --completion                         show command completion script
+  --html, -H                           Escape template for HTML output
   --template TEMPLATE, -t TEMPLATE     Path to Go Template file. Default is stdin.
   --output OUTPUT, -o OUTPUT           Path to output file. Default is stdout
   --data-json DATA-JSON, -j DATA-JSON  Path to JSON file

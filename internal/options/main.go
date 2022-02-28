@@ -13,6 +13,7 @@ type Options struct {
 	TemplatePaths []string
 	TemplateData  decoder.Data
 	OutputPath    string
+	HTML          bool
 }
 
 func ParseOptions(args []string) (Options, error) {
@@ -25,6 +26,15 @@ func ParseOptions(args []string) (Options, error) {
 		&argparse.ParserConfig{
 			AddShellCompletion:     true,
 			DisableDefaultShowHelp: true,
+		},
+	)
+
+	htmlFlag := parser.Flag(
+		"H", "html",
+		&argparse.Option{
+			Positional: false,
+			Required:   false,
+			Help:       "Escape template for HTML output",
 		},
 	)
 
@@ -68,6 +78,8 @@ func ParseOptions(args []string) (Options, error) {
 			fmt.Sprintf("%v\n\n%v", err, parser.FormatHelp()),
 		)
 	}
+
+	opts.HTML = *htmlFlag
 
 	return opts, nil
 }
