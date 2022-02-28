@@ -9,8 +9,6 @@ import (
 	"github.com/Masterminds/sprig"
 )
 
-type GenericFuncMap = map[string]interface{}
-
 type GenericTemplate struct {
 	isHTML bool
 
