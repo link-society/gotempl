@@ -6,7 +6,7 @@ import (
 	htemplate "html/template"
 	ttemplate "text/template"
 
-	"github.com/Masterminds/sprig"
+	"github.com/Masterminds/sprig/v3"
 )
 
 type GenericTemplate struct {

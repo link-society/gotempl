@@ -3,8 +3,8 @@ package options
 import (
 	"fmt"
 
+	"dario.cat/mergo"
 	"github.com/hellflame/argparse"
-	"github.com/imdario/mergo"
 	"github.com/link-society/gotempl/internal/decoder"
 )
 
