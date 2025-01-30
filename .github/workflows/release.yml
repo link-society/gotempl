@@ -1,48 +1,37 @@
 name: build-release
 
 on:
-  push:
-    tags:
-      - '*'
+  release:
+    types: [created]
+
+permissions:
+  contents: write
+  packages: write
 
 jobs:
   release:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [linux, linux-musl, darwin, windows]
-        arch: [386, amd64, arm, arm64]
+        goos: [linux, darwin, windows]
+        goarch: ["386", amd64, arm64]
         exclude:
-          - os: darwin
-            arch: 386
-          - os: darwin
-            arch: arm
-          - os: windows
-            arch: arm
-          - os: windows
-            arch: arm64
+          - goarch: "386"
+            goos: darwin
+          - goarch: arm64
+            goos: windows
 
     steps:
-      - name: Checkout repository
+      - name: checkout@scm
         uses: actions/checkout@main
 
-      - name: Setup Go
-        uses: actions/setup-go@main
+      - name: publish@release
+        uses: wangyoucao577/go-release-action@master
         with:
-          go-version: '1.23.x'
-
-      - name: Build
-        run: go build -o gotempl${{ matrix.os == 'windows' && '.exe' || '' }} .
-        env:
-          GOARCH: ${{ matrix.arch }}
-          GOOS: ${{ matrix.os == 'linux-musl' && 'linux' || matrix.os }}
-          CGO_ENABLED: ${{ matrix.os == 'linux-musl' && '0' || '1' }}
-
-      - name: Publish release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: gotempl${{ matrix.os == 'windows' && '.exe' || '' }}
-          asset_name: gotempl-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.os == 'windows' && '.exe' || '' }}
-          tag: ${{ github.ref }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          goos: ${{ matrix.goos }}
+          goarch: ${{ matrix.goarch }}
+          goversion: "1.23"
+          build_flags: "-tags netgo"
+          ldflags: "-extldflags '-static' -s -w"
           overwrite: yes
