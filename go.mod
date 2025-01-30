@@ -3,8 +3,7 @@ module github.com/link-society/gotempl
 go 1.23
 
 require (
-	github.com/BurntSushi/toml v0.4.1
-	github.com/go-yaml/yaml v2.1.0+incompatible // indirect
+	github.com/BurntSushi/toml v1.4.0
 	github.com/hellflame/argparse v1.3.1
 	github.com/joho/godotenv v1.4.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
