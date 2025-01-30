@@ -34,7 +34,7 @@ func TestEnvDataFile(t *testing.T) {
 
 	result := stdoutBuf.String()
 	expected := "TESTENV: env is test env"
-	assert.Equal(t, result, expected)
+	assert.Equal(t, expected, result)
 }
 
 func TestJsonDataFile(t *testing.T) {
@@ -58,7 +58,7 @@ func TestJsonDataFile(t *testing.T) {
 
 	result := stdoutBuf.String()
 	expected := "TESTJSON: json is test json"
-	assert.Equal(t, result, expected)
+	assert.Equal(t, expected, result)
 }
 
 func TestYamlDataFile(t *testing.T) {
@@ -82,7 +82,7 @@ func TestYamlDataFile(t *testing.T) {
 
 	result := stdoutBuf.String()
 	expected := "TESTYAML: yaml is test yaml"
-	assert.Equal(t, result, expected)
+	assert.Equal(t, expected, result)
 }
 
 func TestTomlDataFile(t *testing.T) {
@@ -106,7 +106,7 @@ func TestTomlDataFile(t *testing.T) {
 
 	result := stdoutBuf.String()
 	expected := "TESTTOML: toml is test toml"
-	assert.Equal(t, result, expected)
+	assert.Equal(t, expected, result)
 }
 
 func TestSprig(t *testing.T) {
@@ -130,7 +130,7 @@ func TestSprig(t *testing.T) {
 
 	result := stdoutBuf.String()
 	expected := "HELLOHELLOHELLOHELLOHELLO"
-	assert.Equal(t, result, expected)
+	assert.Equal(t, expected, result)
 }
 
 func TestIsDir(t *testing.T) {
@@ -152,7 +152,7 @@ func TestIsDir(t *testing.T) {
 
 	result := stdoutBuf.String()
 	expected := "true"
-	assert.Equal(t, result, expected)
+	assert.Equal(t, expected, result)
 }
 
 func TestReadDir(t *testing.T) {
@@ -174,7 +174,7 @@ func TestReadDir(t *testing.T) {
 
 	result := stdoutBuf.String()
 	expected := "[decoder io options template]"
-	assert.Equal(t, result, expected)
+	assert.Equal(t, expected, result)
 }
 
 func TestReadFile(t *testing.T) {
@@ -204,7 +204,7 @@ func TestReadFile(t *testing.T) {
 
 	result := stdoutBuf.String()
 	expected := string(bytes)
-	assert.Equal(t, result, expected)
+	assert.Equal(t, expected, result)
 }
 
 func TestWalkDir(t *testing.T) {
@@ -226,11 +226,11 @@ func TestWalkDir(t *testing.T) {
 
 	result := stdoutBuf.String()
 	expected := fmt.Sprintf(
-		"[workflows %s %s]",
+		"[dependabot.yml workflows %s %s]",
 		filepath.Join("workflows", "release.yml"),
 		filepath.Join("workflows", "test-suite.yml"),
 	)
-	assert.Equal(t, result, expected)
+	assert.Equal(t, expected, result)
 }
 
 func TestFileExists(t *testing.T) {
@@ -252,7 +252,7 @@ func TestFileExists(t *testing.T) {
 
 	result := stdoutBuf.String()
 	expected := "true"
-	assert.Equal(t, result, expected)
+	assert.Equal(t, expected, result)
 }
 
 func TestTemplates(t *testing.T) {
@@ -270,17 +270,17 @@ func TestTemplates(t *testing.T) {
 
 	reader := bufio.NewReader(stdoutBuf)
 	line, ok, err := reader.ReadLine()
-	assert.Equal(t, line, []byte("true"))
+	assert.Equal(t, []byte("true"), line)
 	assert.False(t, ok)
 	assert.Nil(t, err)
 
 	line, ok, err = reader.ReadLine()
-	assert.Equal(t, line, []byte("true"))
+	assert.Equal(t, []byte("true"), line)
 	assert.False(t, ok)
 	assert.Nil(t, err)
 
 	line, ok, err = reader.ReadLine()
 	assert.Nil(t, line)
 	assert.False(t, ok)
-	assert.ErrorIs(t, err, coreIO.EOF)
+	assert.ErrorIs(t, coreIO.EOF, err)
 }
