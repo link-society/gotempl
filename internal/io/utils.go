@@ -2,10 +2,8 @@ package io
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -21,9 +19,9 @@ func ReadTemplate(paths []string, html bool) (*template.GenericTemplate, error) 
 		var templateContent []byte
 
 		for _, path := range paths {
-			content, err := ioutil.ReadFile(path)
+			content, err := os.ReadFile(path)
 			if err != nil {
-				return nil, errors.New(fmt.Sprintf("[template-open] %s", err))
+				return nil, fmt.Errorf("[template-open] %s", err)
 			}
 
 			templateContent = append(templateContent, content...)
@@ -32,15 +30,15 @@ func ReadTemplate(paths []string, html bool) (*template.GenericTemplate, error) 
 		reader = bytes.NewReader(templateContent)
 	}
 
-	content, err := ioutil.ReadAll(reader)
+	content, err := io.ReadAll(reader)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("[template-read] %s", err))
+		return nil, fmt.Errorf("[template-read] %s", err)
 	}
 
 	template, err := template.New("template", html).Parse(string(content))
 
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("[template-parse] %s", err))
+		return nil, fmt.Errorf("[template-parse] %s", err)
 	}
 
 	return template, nil

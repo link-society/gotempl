@@ -1,7 +1,6 @@
 package options
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/hellflame/argparse"
@@ -66,7 +65,7 @@ func ParseOptions(args []string) (Options, error) {
 	decoder.AddOptions(parser, func(data decoder.Data) error {
 		err := mergo.Merge(&opts.TemplateData, data)
 		if err != nil {
-			return errors.New(fmt.Sprintf("[data-merge] %s", err))
+			return fmt.Errorf("[data-merge] %s", err)
 		}
 
 		return nil
@@ -74,9 +73,7 @@ func ParseOptions(args []string) (Options, error) {
 
 	err := parser.Parse(args)
 	if err != nil {
-		return Options{}, errors.New(
-			fmt.Sprintf("%v\n\n%v", err, parser.FormatHelp()),
-		)
+		return Options{}, fmt.Errorf("%v\n\n%v", err, parser.FormatHelp())
 	}
 
 	opts.HTML = *htmlFlag

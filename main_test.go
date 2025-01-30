@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"fmt"
 	coreIO "io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -198,7 +197,10 @@ func TestReadFile(t *testing.T) {
 		t.Error(err)
 	}
 
-	bytes, err := ioutil.ReadFile(path)
+	bytes, err := os.ReadFile(path)
+	if err != nil {
+		t.Error(err)
+	}
 
 	result := stdoutBuf.String()
 	expected := string(bytes)

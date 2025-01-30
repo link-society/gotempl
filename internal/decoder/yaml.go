@@ -1,7 +1,6 @@
 package decoder
 
 import (
-	"errors"
 	"fmt"
 
 	"gopkg.in/yaml.v2"
@@ -22,7 +21,7 @@ func (y YamlDecoder) Decode(input []byte) (Data, error) {
 
 	err := yaml.Unmarshal(input, &data)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("[yaml-decoder] %s", err))
+		return nil, fmt.Errorf("[yaml-decoder] %s", err)
 	}
 
 	return data, nil

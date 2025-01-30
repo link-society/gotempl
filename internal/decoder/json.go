@@ -2,7 +2,6 @@ package decoder
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 )
 
@@ -21,7 +20,7 @@ func (j JsonDecoder) Decode(input []byte) (Data, error) {
 
 	err := json.Unmarshal(input, &data)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("[json-decoder] %s", err))
+		return nil, fmt.Errorf("[json-decoder] %s", err)
 	}
 
 	return data, nil

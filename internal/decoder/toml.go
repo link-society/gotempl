@@ -1,7 +1,6 @@
 package decoder
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/BurntSushi/toml"
@@ -22,7 +21,7 @@ func (t TomlDecoder) Decode(input []byte) (Data, error) {
 
 	err := toml.Unmarshal(input, &data)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("[toml-decoder] %s", err))
+		return nil, fmt.Errorf("[toml-decoder] %s", err)
 	}
 
 	return data, nil

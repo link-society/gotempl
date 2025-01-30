@@ -1,9 +1,8 @@
 package decoder
 
 import (
-	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"strings"
 
@@ -44,14 +43,14 @@ func NewValidator(decoder Decoder, cont DataContinuation) func(string) error {
 	return func(arg string) error {
 		file, err := os.Open(arg)
 		if err != nil {
-			return errors.New(fmt.Sprintf("[decoder-open] %s", err))
+			return fmt.Errorf("[decoder-open] %s", err)
 		}
 
 		defer file.Close()
 
-		buf, err := ioutil.ReadAll(file)
+		buf, err := io.ReadAll(file)
 		if err != nil {
-			return errors.New(fmt.Sprintf("[decoder-read] %s", err))
+			return fmt.Errorf("[decoder-read] %s", err)
 		}
 
 		data, err := decoder.Decode(buf)

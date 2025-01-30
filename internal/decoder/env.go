@@ -1,7 +1,6 @@
 package decoder
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/joho/godotenv"
@@ -20,7 +19,7 @@ func (e EnvDecoder) Shortcut() string {
 func (e EnvDecoder) Decode(input []byte) (Data, error) {
 	env, err := godotenv.Unmarshal(string(input))
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("[env-decoder] %s", err))
+		return nil, fmt.Errorf("[env-decoder] %s", err)
 	}
 
 	data := map[string]interface{}{}

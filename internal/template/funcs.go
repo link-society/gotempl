@@ -2,13 +2,12 @@ package template
 
 import (
 	"errors"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
 
 func ReadFile(path string) (string, error) {
-	bytes, err := ioutil.ReadFile(path)
+	bytes, err := os.ReadFile(path)
 	if err != nil {
 		return "", err
 	}
@@ -65,7 +64,7 @@ func Walk(path string) ([]string, error) {
 }
 
 func ReadDir(path string) ([]string, error) {
-	fileInfos, err := ioutil.ReadDir(path)
+	fileInfos, err := os.ReadDir(path)
 	if err != nil {
 		return nil, err
 	}
