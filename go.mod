@@ -4,7 +4,7 @@ go 1.23
 
 require (
 	dario.cat/mergo v1.0.1
-	github.com/BurntSushi/toml v1.4.0
+	github.com/BurntSushi/toml v1.5.0
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/hellflame/argparse v1.12.0
 	github.com/joho/godotenv v1.5.1
