@@ -2,8 +2,10 @@ package options
 
 import (
 	"fmt"
+	"strings"
 
 	"dario.cat/mergo"
+	"github.com/google/shlex"
 	"github.com/hellflame/argparse"
 	"github.com/link-society/gotempl/internal/decoder"
 )
@@ -17,7 +19,7 @@ type Options struct {
 
 func ParseOptions(args []string) (Options, error) {
 	opts := Options{
-		TemplateData: map[string]interface{}{},
+		TemplateData: map[string]any{},
 	}
 
 	parser := argparse.NewParser(
@@ -57,6 +59,32 @@ func ParseOptions(args []string) (Options, error) {
 			Help:     "Path to output file. Default is stdout",
 			Validate: func(arg string) error {
 				opts.OutputPath = arg
+				return nil
+			},
+		},
+	)
+
+	parser.Strings(
+		"d", "data",
+		&argparse.Option{
+			Positional: false,
+			Required:   false,
+			Help:       "Data value to be used in template. Can be used multiple times.",
+			Validate: func(arg string) error {
+				toks, err := shlex.Split(arg)
+				if err != nil {
+					return fmt.Errorf("Error: %s on data option: %s.", err.Error(), arg)
+				}
+				if len(toks) == 0 {
+					return fmt.Errorf("data-value must be in the form of key=value. Found %s", arg)
+				}
+
+				keyAndValue := strings.SplitN(toks[0], "=", 2)
+				if len(keyAndValue) != 2 {
+					return fmt.Errorf("data-value must be in the form of key=value. Found %s", arg)
+				}
+				opts.TemplateData[strings.TrimSpace(keyAndValue[0])] = strings.TrimSpace(keyAndValue[1])
+
 				return nil
 			},
 		},
