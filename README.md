@@ -13,20 +13,36 @@ The following formats are supported:
 ## Usage
 
 ```text
-usage: gotempl [--help] [--completion] [--template TEMPLATE [TEMPLATE ...]] [--output OUTPUT] [--data-json DATA-JSON [DATA-JSON ...]] [--data-yaml DATA-YAML [DATA-YAML ...]] [--data-toml DATA-TOML [DATA-TOML ...]] [--data-env DATA-ENV [DATA-ENV ...]]
+usage: gotempl [--help] [--completion] [--html] [--template TEMPLATE [TEMPLATE ...]] [--output OUTPUT] [--data DATA [DATA ...]] [--data-json DATA-JSON [DATA-JSON ...]] [--data-yaml DATA-YAML [DATA-YAML ...]] [--data-toml DATA-TOML [DATA-TOML ...]] [--data-env DATA-ENV [DATA-ENV ...]]
 
 Generic templating tool which use both environment variables and data files as template data
 
-optional arguments:
+options:
   --help, -h                           show this help message
   --completion                         show command completion script
   --html, -H                           Escape template for HTML output
   --template TEMPLATE, -t TEMPLATE     Path to Go Template file. Default is stdin.
   --output OUTPUT, -o OUTPUT           Path to output file. Default is stdout
+  --data DATA, -d DATA                 Data value of type name=value to be used in template. Can be used multiple times.
   --data-json DATA-JSON, -j DATA-JSON  Path to JSON file
   --data-yaml DATA-YAML, -y DATA-YAML  Path to YAML file
   --data-toml DATA-TOML, -T DATA-TOML  Path to TOML file
   --data-env DATA-ENV, -e DATA-ENV     Path to ENV file
+```
+
+### Example: Basic usage
+
+Let's create a file named `greeting.template` containing the following:
+
+```tmpl
+Hello {{ .Data.name }}
+```
+
+Using ***gotempl***, you can then render this file to:
+
+```bash
+$ gotempl -t greeting.template --data name="John Smith"
+Hello John Smith
 ```
 
 ### Example: Rendering JSON

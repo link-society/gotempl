@@ -69,7 +69,7 @@ func ParseOptions(args []string) (Options, error) {
 		&argparse.Option{
 			Positional: false,
 			Required:   false,
-			Help:       "Data value to be used in template. Can be used multiple times.",
+			Help:       "Data value of format name=value to be used in template. Can be used multiple times.",
 			Validate: func(arg string) error {
 				toks, err := shlex.Split(arg)
 				if err != nil {
