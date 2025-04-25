@@ -8,6 +8,7 @@ require (
 	dario.cat/mergo v1.0.1
 	github.com/BurntSushi/toml v1.5.0
 	github.com/Masterminds/sprig/v3 v3.3.0
+	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
 	github.com/hellflame/argparse v1.12.0
 	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.10.0
@@ -18,7 +19,6 @@ require (
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.3.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
