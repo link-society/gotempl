@@ -42,7 +42,7 @@ func NewContext(opts options.Options) (Context, error) {
 
 	ctx := Context{
 		Template: template,
-		Data: map[string]interface{}{
+		Data: map[string]any{
 			"Env":  ReadEnvironment(),
 			"Data": opts.TemplateData,
 		},

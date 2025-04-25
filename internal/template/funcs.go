@@ -78,7 +78,7 @@ func ReadDir(path string) ([]string, error) {
 	return result, nil
 }
 
-var funcs = map[string]interface{}{
+var funcs = map[string]any{
 	"isDir":        IsDir,
 	"osIsDir":      IsDir,
 	"readDir":      ReadDir,

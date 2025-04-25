@@ -52,7 +52,7 @@ func (tmpl *GenericTemplate) Parse(text string) (*GenericTemplate, error) {
 	return tmpl, err
 }
 
-func (tmpl *GenericTemplate) Execute(wr io.Writer, data interface{}) error {
+func (tmpl *GenericTemplate) Execute(wr io.Writer, data any) error {
 	var err error
 
 	if tmpl.isHTML {

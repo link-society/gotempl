@@ -9,7 +9,7 @@ import (
 	"github.com/hellflame/argparse"
 )
 
-type Data map[string]interface{}
+type Data map[string]any
 type DataContinuation func(Data) error
 
 type Decoder interface {

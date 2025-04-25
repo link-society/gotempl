@@ -22,7 +22,7 @@ func (e EnvDecoder) Decode(input []byte) (Data, error) {
 		return nil, fmt.Errorf("[env-decoder] %s", err)
 	}
 
-	data := map[string]interface{}{}
+	data := map[string]any{}
 	for key, val := range env {
 		data[key] = val
 	}
